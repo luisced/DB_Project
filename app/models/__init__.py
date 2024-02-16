@@ -1,2 +1,2 @@
 from .user_models import User
-from .class_loader_models import Course, Professor, Room, Schedule
+from .cyber_attack_models import AfectedUser, Device, Geolocalization, CyberAttack
