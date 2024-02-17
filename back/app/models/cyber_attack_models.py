@@ -22,30 +22,30 @@ class Geolocalization(models.Model):
 class CyberAttack(models.Model):
 
     timestamp = models.DateTimeField(verbose_name="Marca de Tiempo")
-    source_ip = models.CharField(max_length=100, verbose_name="IP de Origen")
-    destination_ip = models.CharField(
+    sourceIP = models.CharField(max_length=100, verbose_name="IP de Origen")
+    destinationIP = models.CharField(
         max_length=100, verbose_name="IP de Destino")
-    source_port = models.IntegerField(verbose_name="Puerto de Origen")
-    destination_port = models.IntegerField(verbose_name="Puerto de Destino")
+    sourcePort = models.IntegerField(verbose_name="Puerto de Origen")
+    destinationPort = models.IntegerField(verbose_name="Puerto de Destino")
     protocol = models.CharField(max_length=50, verbose_name="Protocolo")
-    packet_length = models.IntegerField(verbose_name="Longitud del Paquete")
-    packet_type = models.CharField(
+    packetLength = models.IntegerField(verbose_name="Longitud del Paquete")
+    packetType = models.CharField(
         max_length=50, verbose_name="Tipo de Paquete")
-    traffic_type = models.CharField(
+    trafficType = models.CharField(
         max_length=50, verbose_name="Tipo de Tráfico")
-    action_taken = models.CharField(
+    actionTaken = models.CharField(
         max_length=50, verbose_name="Acción Tomada")
-    severity_level = models.CharField(
+    severityLevel = models.CharField(
         max_length=50, verbose_name="Nivel de Severidad")
-    network_segment = models.CharField(
+    networkSegment = models.CharField(
         max_length=50, verbose_name="Segmento de Red")
-    payload_data = models.TextField(
+    payloadData = models.TextField(
         verbose_name="Datos del Payload", null=True, blank=True)
     user = models.ForeignKey(
         AfectedUser, on_delete=models.CASCADE, verbose_name="Usuario")
     device = models.ForeignKey(
         Device, on_delete=models.CASCADE, verbose_name="Dispositivo")
-    geo_location = models.ForeignKey(
+    geoLocation = models.ForeignKey(
         Geolocalization, on_delete=models.CASCADE, verbose_name="Geolocalización")
 
     def __str__(self):
