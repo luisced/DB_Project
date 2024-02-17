@@ -5,10 +5,19 @@ FROM node:16-alpine
 WORKDIR /app
 
 # Copy package.json and package-lock.json (or yarn.lock)
+COPY package*.json ./
+
+# Install dependencies
+# Include your custom libraries in the npm install command
+RUN npm install --frozen-lockfile && \
+    npm install @mui/material @emotion/react @emotion/styled @mui/x-data-grid @mui/icons-material react-router-dom@6.22.1 react-pro-sidebar formik yup @nivo/core @nivo/pie @nivo/line @nivo/bar @nivo/geo
+WORKDIR /app
+
+# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json yarn.lock* ./
 
 # Install dependencies
-RUN npm install
+RUN npm install 
 
 # Bundle app source
 COPY . .
