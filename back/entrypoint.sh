@@ -18,19 +18,6 @@ echo "Creating superuser..."
 python manage.py create_superuser
 echo "<==================================>"
 
-# show directory tree
-echo "Directory tree..."
-ls -l
-echo "<==================================>"
-#show app directory tree
-echo "App directory tree..."
-ls -l app
-echo "<==================================>"
-#show static directory tree
-echo "Static directory tree..."
-ls -l app/static
-echo "<==================================>"
-
 # Add CSV
 echo "Adding CSV..."
 python manage.py import_csv app/static/cybersecurity_attacks.csv
