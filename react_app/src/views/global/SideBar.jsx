@@ -41,12 +41,20 @@ const CustomSidebar = () => {
 	const colors = tokens(theme.palette.mode);
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selected, setSelected] = useState("Dashboard");
-	const sidebarStyles = {
-		backgroundColor: colors.primary[400] + " !important",
+
+	const sidebarClasses = {
+		container: "custom-sidebar",
 	};
 
 	return (
-		<Sidebar collapsed={isCollapsed} rootStyles={sidebarStyles}>
+		<Sidebar
+			collapsed={isCollapsed}
+			rootStyles={{
+				[`.${sidebarClasses.container}`]: {
+					backgroundColor: colors.primary[400] + " !important",
+				},
+			}}
+		>
 			<Menu iconShape="square">
 				{/* LOGO AND MENU ICON */}
 				<MenuItem
@@ -65,7 +73,7 @@ const CustomSidebar = () => {
 							ml="15px"
 						>
 							<Typography variant="h3" color={colors.grey[100]}>
-								ADMINIS
+								ADMINISTRATION
 							</Typography>
 							<IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
 								<MenuOutlinedIcon />
