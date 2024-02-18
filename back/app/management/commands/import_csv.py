@@ -4,10 +4,32 @@ from django.db import transaction
 from django.utils.timezone import make_aware
 from datetime import datetime
 from app.models import AfectedUser, Device, Geolocalization, CyberAttack
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
 import numpy as np
 
+# Initialize caches
+user_cache = {}
+device_cache = {}
+geo_location_cache = {}
+
+def get_or_create_user(username):
+    if username not in user_cache:
+        user, created = AfectedUser.objects.get_or_create(username=username)
+        user_cache[username] = user
+    return user_cache[username]
+
+def get_or_create_device(device_info):
+    if device_info not in device_cache:
+        device, created = Device.objects.get_or_create(device_information=device_info)
+        device_cache[device_info] = device
+    return device_cache[device_info]
+
+def get_or_create_geolocation(location_data):
+    if location_data not in geo_location_cache:
+        geo_location, created = Geolocalization.objects.get_or_create(location=location_data)
+        geo_location_cache[location_data] = geo_location
+    return geo_location_cache[location_data]
 
 def process_chunk(chunk_data):
     import django
@@ -16,15 +38,12 @@ def process_chunk(chunk_data):
     cyber_attacks_to_create = []
 
     for _, row in chunk_data.iterrows():
-        naive_timestamp = datetime.strptime(
-            row['Timestamp'], '%Y-%m-%d %H:%M:%S')
+        naive_timestamp = datetime.strptime(row['Timestamp'], '%Y-%m-%d %H:%M:%S')
         aware_timestamp = make_aware(naive_timestamp)
-        user, _ = AfectedUser.objects.get_or_create(
-            username=row['User Information'])
-        device, _ = Device.objects.get_or_create(
-            device_information=row['Device Information'][:100])
-        geo_location, _ = Geolocalization.objects.get_or_create(
-            location=row['Geo-location Data'])
+
+        user = get_or_create_user(row['User Information'])
+        device = get_or_create_device(row['Device Information'][:100])
+        geo_location = get_or_create_geolocation(row['Geo-location Data'])
 
         cyber_attack = CyberAttack(
             timestamp=aware_timestamp,
@@ -47,19 +66,15 @@ def process_chunk(chunk_data):
         cyber_attacks_to_create.append(cyber_attack)
 
     # Bulk insert
-    with transaction.atomic():
-        CyberAttack.objects.bulk_create(
-            cyber_attacks_to_create, batch_size=500)
+    CyberAttack.objects.bulk_create(cyber_attacks_to_create, batch_size=500)
 
     return len(cyber_attacks_to_create)
-
 
 class Command(BaseCommand):
     help = 'Import CSV data into the database using multiprocessing for efficiency.'
 
     def add_arguments(self, parser):
-        parser.add_argument('csv_file_path', type=str,
-                            help='The CSV file path')
+        parser.add_argument('csv_file_path', type=str, help='The CSV file path')
 
     def handle(self, *args, **kwargs):
         csv_file_path = kwargs['csv_file_path']
@@ -75,10 +90,11 @@ class Command(BaseCommand):
         # Process chunks in parallel
         total_processed = 0
         with ProcessPoolExecutor(max_workers=num_processes) as executor:
-            futures = [executor.submit(process_chunk, chunk)
-                       for chunk in chunks]
-            for future in futures:
-                total_processed += future.result()
+            futures = [executor.submit(process_chunk, chunk) for chunk in chunks]
+            for future in as_completed(futures):
+                result = future.result()
+                self.stdout.write(self.style.SUCCESS(f'Processed {result} records.'))
+                total_processed += result
 
-        self.stdout.write(self.style.SUCCESS(
-            f'Successfully processed {total_processed} records.'))
+        self.stdout.write(self.style.SUCCESS(f'Successfully processed {total_processed} records.'))
+
