@@ -20,12 +20,14 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 const Item = ({ title, to, icon, selected, setSelected }) => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
-
 	return (
 		<MenuItem
 			active={selected === title}
 			style={{
 				color: colors.grey[100],
+				backgroundColor:
+					selected === title ? colors.primary[300] : "transparent",
+				borderRadius: "10px",
 			}}
 			onClick={() => setSelected(title)}
 			icon={icon}
@@ -42,18 +44,11 @@ const CustomSidebar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [selected, setSelected] = useState("Dashboard");
 
-	const sidebarClasses = {
-		container: "custom-sidebar",
-	};
-
 	return (
 		<Sidebar
 			collapsed={isCollapsed}
-			rootStyles={{
-				[`.${sidebarClasses.container}`]: {
-					backgroundColor: colors.primary[400] + " !important",
-				},
-			}}
+			backgroundColor={colors.primary[400] + " !important"}
+			rtl={false}
 		>
 			<Menu iconShape="square">
 				{/* LOGO AND MENU ICON */}
@@ -73,7 +68,7 @@ const CustomSidebar = () => {
 							ml="15px"
 						>
 							<Typography variant="h3" color={colors.grey[100]}>
-								ADMINISTRATION
+								ADMINI
 							</Typography>
 							<IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
 								<MenuOutlinedIcon />
@@ -89,7 +84,7 @@ const CustomSidebar = () => {
 								alt="profile-user"
 								width="100px"
 								height="100px"
-								src={`../../assets/user.png`}
+								src="https://avatars.githubusercontent.com/u/63626850?s=400&u=fa33bb8f5585086580fbafb58c60cb1e407aa7d2&v=4"
 								style={{ cursor: "pointer", borderRadius: "50%" }}
 							/>
 						</Box>
@@ -100,7 +95,7 @@ const CustomSidebar = () => {
 								fontWeight="bold"
 								sx={{ m: "10px 0 0 0" }}
 							>
-								Ed Roh
+								Luis Cedillo
 							</Typography>
 							<Typography variant="h5" color={colors.greenAccent[500]}>
 								VP Fancy Admin
