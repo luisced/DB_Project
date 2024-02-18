@@ -24,9 +24,9 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 		<MenuItem
 			active={selected === title}
 			style={{
-				color: colors.grey[100],
+				color: selected === title ? "#6870fa" : colors.grey[200],
 				backgroundColor:
-					selected === title ? colors.primary[300] : "transparent",
+					selected === title ? colors.primary[900] : "transparent",
 				borderRadius: "10px",
 			}}
 			onClick={() => setSelected(title)}
@@ -50,7 +50,24 @@ const CustomSidebar = () => {
 			backgroundColor={colors.primary[400] + " !important"}
 			rtl={false}
 		>
-			<Menu iconShape="square">
+			<Menu
+				iconShape="square"
+				menuItemStyles={{
+					button: ({ level, active, disabled }) => {
+						if (level === 0) {
+							return {
+								color: disabled ? "#eee" : "#455A64",
+								"&:hover": {
+									backgroundColor: "#868dfb !important",
+									color: "white !important",
+									borderRadius: "8px !important",
+									fontWeight: "bold !important",
+								},
+							};
+						}
+					},
+				}}
+			>
 				{/* LOGO AND MENU ICON */}
 				<MenuItem
 					onClick={() => setIsCollapsed(!isCollapsed)}
@@ -68,7 +85,7 @@ const CustomSidebar = () => {
 							ml="15px"
 						>
 							<Typography variant="h3" color={colors.grey[100]}>
-								ADMINI
+								ADMINIS
 							</Typography>
 							<IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
 								<MenuOutlinedIcon />
