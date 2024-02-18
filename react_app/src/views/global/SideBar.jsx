@@ -49,6 +49,11 @@ const CustomSidebar = () => {
 			collapsed={isCollapsed}
 			backgroundColor={colors.primary[400] + " !important"}
 			rtl={false}
+			style={{
+				"& .pro-icon-wrapper": {
+					backgroundColor: "transparent !important",
+				},
+			}}
 		>
 			<Menu
 				iconShape="square"
@@ -85,7 +90,7 @@ const CustomSidebar = () => {
 							ml="15px"
 						>
 							<Typography variant="h3" color={colors.grey[100]}>
-								ADMINIS
+								ADMIN
 							</Typography>
 							<IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
 								<MenuOutlinedIcon />
