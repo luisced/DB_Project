@@ -15,21 +15,34 @@ geo_location_cache = {}
 
 def get_or_create_user(username):
     if username not in user_cache:
-        user, created = AfectedUser.objects.get_or_create(username=username)
+        queryset = AfectedUser.objects.filter(username=username)
+        if queryset.exists():
+            user = queryset.first()
+        else:
+            user = AfectedUser.objects.create(username=username)
         user_cache[username] = user
     return user_cache[username]
 
 def get_or_create_device(device_info):
     if device_info not in device_cache:
-        device, created = Device.objects.get_or_create(device_information=device_info)
+        queryset = Device.objects.filter(device_information=device_info)
+        if queryset.exists():
+            device = queryset.first()
+        else:
+            device = Device.objects.create(device_information=device_info)
         device_cache[device_info] = device
     return device_cache[device_info]
 
 def get_or_create_geolocation(location_data):
     if location_data not in geo_location_cache:
-        geo_location, created = Geolocalization.objects.get_or_create(location=location_data)
+        queryset = Geolocalization.objects.filter(location=location_data)
+        if queryset.exists():
+            geo_location = queryset.first()
+        else:
+            geo_location = Geolocalization.objects.create(location=location_data)
         geo_location_cache[location_data] = geo_location
     return geo_location_cache[location_data]
+
 
 def process_chunk(chunk_data):
     import django
