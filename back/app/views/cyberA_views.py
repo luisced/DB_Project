@@ -31,16 +31,22 @@ def get_cyberAttack(request, pk):
 @api_view(['GET'])
 def get_afectedUsers(request):
     afectedUsers = AfectedUser.objects.all()
-    serializer = AfectedUserSerializer(afectedUsers, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(afectedUsers, request)
+    serializer = AfectedUserSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 # GET all devices
 
 @api_view(['GET'])
 def get_devices(request):
     devices = Device.objects.all()
-    serializer = DeviceSerializer(devices, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(devices, request)
+    serializer = DeviceSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 # GET all geolocalizations
 
