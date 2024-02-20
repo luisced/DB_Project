@@ -1,15 +1,20 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from ..serializers.cyberAttack_serializers import CyberAttackSerializer, AfectedUserSerializer, DeviceSerializer, GeolocalizationSerializer
 from ..models.cyber_attack_models import CyberAttack, AfectedUser, Device, Geolocalization
+
 
 # GET all cyberAttacks
 
 @api_view(['GET'])
 def get_cyberAttacks(request):
     cyberAttacks = CyberAttack.objects.all()
-    serializer = CyberAttackSerializer(cyberAttacks, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(cyberAttacks, request)
+    serializer = CyberAttackSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 # GET single cyberAttack
 
