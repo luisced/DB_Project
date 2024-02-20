@@ -11,7 +11,7 @@ from ..models.cyber_attack_models import CyberAttack, AfectedUser, Device, Geolo
 def get_cyberAttacks(request):
     cyberAttacks = CyberAttack.objects.all()
     paginator = PageNumberPagination()
-    paginator.page_size = 10
+    paginator.page_size = 100
     result_page = paginator.paginate_queryset(cyberAttacks, request)
     serializer = CyberAttackSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
@@ -32,7 +32,7 @@ def get_cyberAttack(request, pk):
 def get_afectedUsers(request):
     afectedUsers = AfectedUser.objects.all()
     paginator = PageNumberPagination()
-    paginator.page_size = 10
+    paginator.page_size = 500
     result_page = paginator.paginate_queryset(afectedUsers, request)
     serializer = AfectedUserSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
@@ -43,7 +43,7 @@ def get_afectedUsers(request):
 def get_devices(request):
     devices = Device.objects.all()
     paginator = PageNumberPagination()
-    paginator.page_size = 10
+    paginator.page_size = 500
     result_page = paginator.paginate_queryset(devices, request)
     serializer = DeviceSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
