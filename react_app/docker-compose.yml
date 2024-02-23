@@ -12,3 +12,7 @@ services:
       - .:/app
       - /app/node_modules
     command: npm start # Override the default command to use the development server
+
+networks:
+  app_network:
+    external: true
