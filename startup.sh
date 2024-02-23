@@ -26,11 +26,10 @@ fi
 
 # Navigate to the Django app directory and start the services
 echo "Starting Django app..."
-cd ./back
+cd /back
 docker compose --env-file .env.dev -f docker-compose.dev.yml up -d
 echo "Waiting for database to become ready..."
-sleep 50
-
+wait_for_db
 # Navigate to the React app directory and start the services
 echo "Starting React app..."
 cd react_app
