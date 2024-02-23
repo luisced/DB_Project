@@ -10,7 +10,8 @@ COPY package*.json ./
 # Install dependencies
 # Include your custom libraries in the npm install command
 RUN npm install --frozen-lockfile && \
-    npm install @mui/material @emotion/react @emotion/styled @mui/x-data-grid @mui/icons-material react-router-dom@6.22.1 react-pro-sidebar formik yup @nivo/core @nivo/pie @nivo/line @nivo/bar @nivo/geo
+    npm install axios @mui/material @emotion/react @emotion/styled @mui/x-data-grid @mui/icons-material react-router-dom@6.22.1 react-pro-sidebar formik yup @nivo/core @nivo/pie @nivo/line @nivo/bar @nivo/geo @babel/plugin-proposal-private-property-in-object
+
 WORKDIR /app
 
 # Copy package.json and package-lock.json (or yarn.lock)

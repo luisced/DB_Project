@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
+import axios from "axios";
 import Topbar from "./views/global/Topbar";
 import Dashboard from "./views/dashboard";
 import CustomSidebar from "./views/global/Sidebar";
@@ -14,6 +15,21 @@ import CustomSidebar from "./views/global/Sidebar";
 
 function App() {
 	const [theme, colorMode] = useMode();
+	const [apiData, setApiData] = useState(null); // State to hold the fetched data
+
+	useEffect(() => {
+		// Function to fetch data
+		const fetchData = async () => {
+			try {
+				const response = await axios.get("https://api.example.com/data");
+				setApiData(response.data); // Set the fetched data into state
+			} catch (error) {
+				console.error("Error fetching API data: ", error);
+			}
+		};
+
+		fetchData();
+	}, []);
 
 	return (
 		<ColorModeContext.Provider value={colorMode}>
