@@ -8,6 +8,7 @@ import Dashboard from "./views/dashboard";
 import CustomSidebar from "./views/global/Sidebar";
 import Bar from "./scenes/bar";
 import Line from "./scenes/line";
+import Geography from "./scenes/geography";
 
 function App() {
 	const [theme, colorMode] = useMode();
@@ -41,6 +42,7 @@ function App() {
 							<Route path="/" element={<Dashboard apiData={apiData} />} />
 							<Route path="/bar" element={<Bar />} />
 							<Route path="/line" element={<Line />} />
+							<Route path="/geography" element={<Geography />} />
 						</Routes>
 					</main>
 				</div>
