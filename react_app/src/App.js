@@ -6,6 +6,8 @@ import { Route, Routes } from "react-router-dom";
 import Topbar from "./views/global/Topbar";
 import Dashboard from "./views/dashboard";
 import CustomSidebar from "./views/global/Sidebar";
+import Bar from "./scenes/bar";
+import Line from "./scenes/line";
 
 function App() {
 	const [theme, colorMode] = useMode();
@@ -37,6 +39,8 @@ function App() {
 						<Topbar />
 						<Routes>
 							<Route path="/" element={<Dashboard apiData={apiData} />} />
+							<Route path="/bar" element={<Bar />} />
+							<Route path="/line" element={<Line />} />
 						</Routes>
 					</main>
 				</div>
