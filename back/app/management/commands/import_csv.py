@@ -24,14 +24,8 @@ def get_or_create_user(username):
     return user_cache[username]
 
 def get_or_create_device(device_info):
-    if device_info not in device_cache:
-        queryset = Device.objects.filter(device_information=device_info)
-        if queryset.exists():
-            device = queryset.first()
-        else:
-            device = Device.objects.create(device_information=device_info)
-        device_cache[device_info] = device
-    return device_cache[device_info]
+    
+    web_browser, os, rest_info =
 
 def get_or_create_geolocation(location_data):
     if location_data not in geo_location_cache:
