@@ -23,18 +23,34 @@ def get_or_create_user(username):
         user_cache[username] = user
     return user_cache[username]
 
+def deviceSplit(device_info):
+    '''
+Mozilla/5.0 (Android 1.0; Mobile; rv:14.0) Gecko/14.0 Firefox/14.0
+Mozilla/5.0 (Android 1.0; Mobile; rv:19.0) Gecko/19.0 Firefox/19.0
+Mozilla/5.0 (Android 1.0; Mobile; rv:30.0) Gecko/30.0 Firefox/30.0
+
+web_browser = Mozilla/5.0 everything before (
+os = Android 1.0 everything between ( )
+rest = Gecko/14.0 Firefox/14.0 everything after )
+'''
+    web_browser = device_info.split('(')[0]
+    os = device_info.split('(')[1].split(')')[0]
+    rest = device_info.split(')')[1]
+    return web_browser, os, rest
+
 def get_or_create_device(device_info):
-    
-    web_browser, os, rest_info =
+    if device_info not in device_cache:
+        web_browser, os, rest = deviceSplit(device_info)
+        device = Device.objects.create(web_browser=web_browser, operative_system=os, rest_information=rest)
+        device_cache[device_info] = device
+    return device_cache[device_info]
 
 def get_or_create_geolocation(location_data):
     if location_data not in geo_location_cache:
-        queryset = Geolocalization.objects.filter(location=location_data)
-        if queryset.exists():
-            geo_location = queryset.first()
-        else:
-            geo_location = Geolocalization.objects.create(location=location_data)
+        locality, city = location_data.split(',')
+        geo_location = Geolocalization.objects.create(locality=locality, city=city)
         geo_location_cache[location_data] = geo_location
+        
     return geo_location_cache[location_data]
 
 
@@ -65,7 +81,6 @@ def process_chunk(chunk_data):
             actionTaken=row['Action Taken'],
             severityLevel=row['Severity Level'],
             networkSegment=row['Network Segment'],
-            payloadData=row.get('Payload Data', ''),
             user=user,
             device=device,
             geoLocation=geo_location
