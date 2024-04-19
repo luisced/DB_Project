@@ -67,7 +67,7 @@ def process_chunk(chunk_data):
         user = get_or_create_user(row['User Information'])
         device = get_or_create_device(row['Device Information'][:100])
         geo_location = get_or_create_geolocation(row['Geo-location Data'])
-
+        
         cyber_attack = CyberAttack(
             timestamp=aware_timestamp,
             sourceIP=row['Source IP Address'],
@@ -83,7 +83,10 @@ def process_chunk(chunk_data):
             networkSegment=row['Network Segment'],
             user=user,
             device=device,
-            geoLocation=geo_location
+            geoLocation=geo_location,
+            attackType=row['Attack Type'],
+            idsIpsAlerts= row['IDS/IPS Alerts'] == 'Alert Data',
+            alertsWarnings=row['Alerts/Warnings']
         )
         cyber_attacks_to_create.append(cyber_attack)
 
@@ -100,7 +103,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         csv_file_path = kwargs['csv_file_path']
-
+        if CyberAttack.objects.exists():
+            self.stdout.write(self.style.WARNING('Database already populated. Skipping import.'))
+            return 
+        
         df = pd.read_csv(csv_file_path)
 
         # Determine the number of processes based on available CPUs
