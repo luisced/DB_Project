@@ -24,15 +24,6 @@ def get_or_create_user(username):
     return user_cache[username]
 
 def deviceSplit(device_info):
-    '''
-Mozilla/5.0 (Android 1.0; Mobile; rv:14.0) Gecko/14.0 Firefox/14.0
-Mozilla/5.0 (Android 1.0; Mobile; rv:19.0) Gecko/19.0 Firefox/19.0
-Mozilla/5.0 (Android 1.0; Mobile; rv:30.0) Gecko/30.0 Firefox/30.0
-
-web_browser = Mozilla/5.0 everything before (
-os = Android 1.0 everything between ( )
-rest = Gecko/14.0 Firefox/14.0 everything after )
-'''
     web_browser = device_info.split('(')[0]
     os = device_info.split('(')[1].split(')')[0]
     rest = device_info.split(')')[1]
@@ -65,28 +56,28 @@ def process_chunk(chunk_data):
         aware_timestamp = make_aware(naive_timestamp)
 
         user = get_or_create_user(row['User Information'])
-        device = get_or_create_device(row['Device Information'][:100])
+        device = get_or_create_device(row['Device Information'])
         geo_location = get_or_create_geolocation(row['Geo-location Data'])
         
         cyber_attack = CyberAttack(
             timestamp=aware_timestamp,
             sourceIP=row['Source IP Address'],
             destinationIP=row['Destination IP Address'],
-            sourcePort=int(row['Source Port']),
-            destinationPort=int(row['Destination Port']),
+            sourcePort=row['Source Port'],
+            destinationPort=row['Destination Port'],
             protocol=row['Protocol'],
-            packetLength=int(row['Packet Length']),
+            packetLength=row['Packet Length'],
             packetType=row['Packet Type'],
             trafficType=row['Traffic Type'],
             actionTaken=row['Action Taken'],
             severityLevel=row['Severity Level'],
             networkSegment=row['Network Segment'],
+            alertsWarnings=row['Alerts/Warnings']=="Alert Triggered",
+            attackType=row['Attack Type'],
+            idsIpsAlerts=row['IDS/IPS Alerts']=="Alert Data",
             user=user,
             device=device,
-            geoLocation=geo_location,
-            attackType=row['Attack Type'],
-            idsIpsAlerts= row['IDS/IPS Alerts'] == 'Alert Data',
-            alertsWarnings=row['Alerts/Warnings']
+            geoLocation=geo_location
         )
         cyber_attacks_to_create.append(cyber_attack)
 

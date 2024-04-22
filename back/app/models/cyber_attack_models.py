@@ -31,12 +31,12 @@ class CyberAttack(models.Model):
     actionTaken = models.CharField(max_length=255, verbose_name="Acción Tomada", null=True, blank=True)
     severityLevel = models.CharField(max_length=255, verbose_name="Nivel de Severidad", null=True, blank=True)
     networkSegment = models.CharField(max_length=255, verbose_name="Segmento de Red", null=True, blank=True)
-    alertsWarnings = models.TextField(verbose_name="Alertas/Advertencias", null=True, blank=True)
+    alertsWarnings = models.BooleanField(verbose_name="Alertas/Advertencias", default=False, null=True)
     attackType = models.CharField(max_length=255, verbose_name="Tipo de Ataque", null=True, blank=True)
     idsIpsAlerts = models.BooleanField(verbose_name="Alertas IDS/IPS", default=False, null=True)
-    user = models.ForeignKey(AfectedUser, on_delete=models.CASCADE, verbose_name="Usuario")
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, verbose_name="Dispositivo")
-    geoLocation = models.ForeignKey(Geolocalization, on_delete=models.CASCADE, verbose_name="Geolocalización")
+    user = models.ForeignKey(AfectedUser, on_delete=models.CASCADE, verbose_name="Usuario", null=True, blank=True)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, verbose_name="Dispositivo", null=True, blank=True)
+    geoLocation = models.ForeignKey(Geolocalization, on_delete=models.CASCADE, verbose_name="Geolocalización", null=True, blank=True)
 
     def __str__(self):
         return f"{self.sourceIP} -> {self.destinationIP} at {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
