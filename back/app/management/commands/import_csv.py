@@ -13,35 +13,50 @@ user_cache = {}
 device_cache = {}
 geo_location_cache = {}
 
-def get_or_create_user(username):
-    if username not in user_cache:
-        queryset = AfectedUser.objects.filter(username=username)
-        if queryset.exists():
-            user = queryset.first()
+def get_or_create_user(name_data):
+    if name_data not in user_cache:
+        user_cache[name_data]=name_data
+        query = AfectedUser.objects.filter(username=name_data)
+        if query.exists():
+            user_cache[name_data] = query.first()
         else:
-            user = AfectedUser.objects.create(username=username)
-        user_cache[username] = user
-    return user_cache[username]
+            user = AfectedUser.objects.create(username=name_data)
+        return user
+    return user_cache[name_data]
 
 def deviceSplit(device_info):
-    web_browser = device_info.split('(')[0]
-    os = device_info.split('(')[1].split(')')[0]
-    rest = device_info.split(')')[1]
+    #Before ( = web_browser
+    #In () = operative_system
+    #After ) = rest_information
+    
+    web_browser = device_info.split(' (')[0]
+    os = device_info.split(' (')[1].split(')')[0]
+    rest = device_info.split(') ')[1]
     return web_browser, os, rest
 
 def get_or_create_device(device_info):
     if device_info not in device_cache:
         web_browser, os, rest = deviceSplit(device_info)
-        device = Device.objects.create(web_browser=web_browser, operative_system=os, rest_information=rest)
-        device_cache[device_info] = device
+        device_cache[device_info][web_browser]=web_browser
+        device_cache[device_info][os]=os
+        device_cache[device_info][rest]=rest
+        query = Device.objects.filter(web_browser=web_browser, os=os, rest=rest)
+        if query.exists():
+            device_cache[device_info] = query.first()
+        else:
+            device = Device.objects.create(device=device_info, web_browser=web_browser, os=os, rest=rest)
+        return device
     return device_cache[device_info]
 
 def get_or_create_geolocation(location_data):
     if location_data not in geo_location_cache:
-        locality, city = location_data.split(',')
-        geo_location = Geolocalization.objects.create(locality=locality, city=city)
+        query = Geolocalization.objects.filter(location=location_data)
+        if query.exists():
+            geo_location_cache[location_data] = query.first()
+        else:
+            locality , city = location_data.split(', ')
+            geo_location = Geolocalization.objects.create(location=location_data, locality=locality, city=city)
         geo_location_cache[location_data] = geo_location
-        
     return geo_location_cache[location_data]
 
 
