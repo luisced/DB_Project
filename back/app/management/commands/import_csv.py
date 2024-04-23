@@ -1,6 +1,5 @@
 import pandas as pd
 from django.core.management.base import BaseCommand
-from django.db import transaction
 from django.utils.timezone import make_aware
 from datetime import datetime
 from app.models import AfectedUser, Device, Geolocalization, CyberAttack
@@ -22,11 +21,6 @@ def get_or_create_user(username):
 
 def deviceSplit(device_info):
     try:
-        '''
-        Before the first ( found = web_browser
-        After the first ( found and before the first ) found = os
-        After the first ) found = rest
-        '''
         web_browser = device_info.split('(')[0].strip()
         os = device_info.split('(')[1].split(')')[0].strip()
         rest = device_info.split(')')[1].strip()
@@ -65,7 +59,7 @@ def get_or_create_geolocation(location_data):
 
 def process_chunk(chunk_data):
     from django import db
-    db.connections.close_all()  # Close existing database connections
+    db.connections.close_all()
     import django
     django.setup()
 
@@ -103,7 +97,6 @@ def process_chunk(chunk_data):
             cyber_attacks_to_create.append(cyber_attack)
 
         CyberAttack.objects.bulk_create(cyber_attacks_to_create, batch_size=500)
-        print(f"Processed {len(cyber_attacks_to_create)} records.")
     except Exception as e:
         # Log the exception, consider re-raising or handling it as needed
         print(f"Error processing chunk: {e}")
@@ -120,6 +113,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         csv_file_path = kwargs['csv_file_path']
+        
         if CyberAttack.objects.exists():
             self.stdout.write(self.style.WARNING('Database already populated. Skipping import.'))
             return 

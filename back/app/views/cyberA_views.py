@@ -42,7 +42,10 @@ def severityOverTime(request):
 @api_view(['GET'])
 def mostAttackedDevices(request):
     devices = CyberAttack.objects.values('device__web_browser', 'device__operative_system').annotate(count=Count('device')).order_by('-count')
-    return Response(devices)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(devices, request)
+    return paginator.get_paginated_response(result_page)
 
 # IDS/IPS Alerts Detection
 @api_view(['GET'])
