@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Count
+from django.db.models import Count, F
 from django.db import models
 from ..serializers.cyberAttack_serializers import CyberAttackSerializer, AfectedUserSerializer, DeviceSerializer, GeolocalizationSerializer
 from ..models import CyberAttack, AfectedUser, Device, Geolocalization
@@ -106,3 +106,43 @@ def get_geolocalizations(request):
     result_page = paginator.paginate_queryset(geolocalizations, request)
     serializer = GeolocalizationSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(['GET'])
+def unalerted_attacks_by_country(request):
+    # Query to fetch and aggregate unalerted attacks by country
+    attacks_data = CyberAttack.objects.filter(
+        alertsWarnings=False,
+        geoLocation__isnull=False
+    ).values(
+        country=F('geoLocation__locality')  # Corrected to use 'locality'
+    ).annotate(
+        count=Count('id')
+    ).order_by('-count')
+
+    return Response(attacks_data)
+
+@api_view(['GET'])
+def attack_types_by_country(request):
+    # Correctly using .values() for grouping and .annotate() for counting
+    attack_types_data = CyberAttack.objects.filter(
+        alertsWarnings=False,
+        geoLocation__isnull=False
+    ).values(
+        'geoLocation__locality',  # Directly specify the field for grouping
+        'attackType'  # Directly specify the field for additional grouping
+    ).annotate(
+        count=Count('id')  # Only use aggregate functions in annotate
+    ).order_by('geoLocation__locality', '-count')
+
+    # Reformatting the data for better JSON structure
+    result = {}
+    for item in attack_types_data:
+        country = item['geoLocation__locality']  # Use the correct field name from values
+        attack_type = item['attackType']  # Use the correct field name from values
+        if country not in result:
+            result[country] = []
+        result[country].append({attack_type: item['count']})
+        
+    return Response(result)
+

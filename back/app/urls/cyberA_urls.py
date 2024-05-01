@@ -16,6 +16,8 @@ urlpatterns = [
     path('cyber-attacks/attack-action/', views.attackAction, name='attackAction'),
     path('cyber-attacks/protocol-frequency/', views.protocolFrequency, name='protocolFrequency'),
     path('cyber-attacks/alerts-warnings/', views.alertsWarnings, name='alertsWarnings'),
+    path('cyber-attacks/unalerted-attacks/', views.unalerted_attacks_by_country, name='unalerted_attacks_by_country'),
+    path('cyber-attacks/attack-types/', views.attack_types_by_country, name='attack_types_by_country'),
 ]
 
 '''
@@ -33,4 +35,6 @@ http://localhost:8000/cyber-attacks/geo-location/
 http://localhost:8000/cyber-attacks/attack-action/
 http://localhost:8000/cyber-attacks/protocol-frequency/
 http://localhost:8000/cyber-attacks/alerts-warnings/
+http://localhost:8000/cyber-attacks/unalerted-attacks/
+http://localhost:8000/cyber-attacks/attack-types/
 '''
