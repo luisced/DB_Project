@@ -5,9 +5,9 @@ import HeatMap from "../../components/HeatMap";
 const Heat = () => {
 	return (
 		<Box m="20px">
-			<Header title="Heat Map" subtitle="Simple Bar Chart" />
+			<Header title="Heat Map" subtitle="Simple HeatMap" />
 			<Box height="75vh">
-				<BarChart />
+				<HeatMap />
 			</Box>
 		</Box>
 	);
