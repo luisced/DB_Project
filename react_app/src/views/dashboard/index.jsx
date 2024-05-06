@@ -8,10 +8,15 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
+import HeatMap from "../../components/HeatMap";
 import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import PieChart from "../../components/PieChart";
+import AreBumpChart from "../../components/AreaBump";
+import CalendarChart from "../../components/CalendarChart";
+import TreeMapChart from "../../components/TreeMapChart";
 
 const Dashboard = () => {
 	const theme = useTheme();
@@ -172,48 +177,18 @@ const Dashboard = () => {
 					overflow="auto"
 				>
 					<Box
-						display="flex"
-						justifyContent="space-between"
-						alignItems="center"
-						borderBottom={`4px solid ${colors.primary[500]}`}
-						colors={colors.grey[100]}
-						p="15px"
+						gridColumn="span 4"
+						gridRow="span 2"
+						backgroundColor={colors.primary[400]}
+						padding="30px"
 					>
-						<Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-							Recent Transactions
+						<Typography variant="h5" fontWeight="600">
+							Area
 						</Typography>
-					</Box>
-					{mockTransactions.map((transaction, i) => (
-						<Box
-							key={`${transaction.txId}-${i}`}
-							display="flex"
-							justifyContent="space-between"
-							alignItems="center"
-							borderBottom={`4px solid ${colors.primary[500]}`}
-							p="15px"
-						>
-							<Box>
-								<Typography
-									color={colors.greenAccent[500]}
-									variant="h5"
-									fontWeight="600"
-								>
-									{transaction.txId}
-								</Typography>
-								<Typography color={colors.grey[100]}>
-									{transaction.user}
-								</Typography>
-							</Box>
-							<Box color={colors.grey[100]}>{transaction.date}</Box>
-							<Box
-								backgroundColor={colors.greenAccent[500]}
-								p="5px 10px"
-								borderRadius="4px"
-							>
-								${transaction.cost}
-							</Box>
+						<Box height="300px" m="-20px 0 0 0">
+							<CalendarChart />
 						</Box>
-					))}
+					</Box>
 				</Box>
 
 				{/* ROW 3 */}
@@ -221,26 +196,13 @@ const Dashboard = () => {
 					gridColumn="span 4"
 					gridRow="span 2"
 					backgroundColor={colors.primary[400]}
-					p="30px"
+					padding="30px"
 				>
 					<Typography variant="h5" fontWeight="600">
-						Campaign
+						Progress Circle
 					</Typography>
-					<Box
-						display="flex"
-						flexDirection="column"
-						alignItems="center"
-						mt="25px"
-					>
-						<ProgressCircle size="125" />
-						<Typography
-							variant="h5"
-							color={colors.greenAccent[500]}
-							sx={{ mt: "15px" }}
-						>
-							$48,352 revenue generated
-						</Typography>
-						<Typography>Includes extra misc expenditures and costs</Typography>
+					<Box height="300px" m="-20px 0 0 0">
+						<PieChart />
 					</Box>
 				</Box>
 				<Box
@@ -264,6 +226,7 @@ const Dashboard = () => {
 					gridRow="span 2"
 					backgroundColor={colors.primary[400]}
 					padding="30px"
+					top="10px"
 				>
 					<Typography
 						variant="h5"
@@ -275,6 +238,34 @@ const Dashboard = () => {
 							<GeographyChart isDashboard={true} />
 						</Box>
 					</Typography>
+				</Box>
+				{/* Row 4*/}
+
+				<Box
+					gridColumn="span 8"
+					gridRow="span 2"
+					backgroundColor={colors.primary[400]}
+					padding="30px"
+				>
+					<Typography variant="h5" fontWeight="600">
+						Heat Map
+					</Typography>
+					<Box height="300px" m="-20px 0 0 0">
+						<TreeMapChart />
+					</Box>
+				</Box>
+				<Box
+					gridColumn="span 4"
+					gridRow="span 2"
+					backgroundColor={colors.primary[400]}
+					padding="30px"
+				>
+					<Typography variant="h5" fontWeight="600">
+						Area
+					</Typography>
+					<Box height="300px" m="-20px 0 0 0">
+						<AreBumpChart />
+					</Box>
 				</Box>
 			</Box>
 		</Box>

@@ -2,10 +2,31 @@ import { ResponsivePie } from "@nivo/pie";
 import { tokens } from "../theme";
 import { useTheme } from "@mui/material";
 import { mockPieData as data } from "../data/mockData";
+import React, { useState, useEffect } from "react";
+import { fetchAttackProtocolFrecuency } from "../network/request";
 
-const PieChart = () => {
+const PieChart = (isDashboard = false) => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	const fetchData = async () => {
+		try {
+			const attackTypesData = await fetchAttackProtocolFrecuency();
+			setData(attackTypesData);
+			setLoading(false);
+		} catch (error) {
+			console.error("Error fetching data", error);
+			setError("Failed to fetch data from the API");
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
 	return (
 		<ResponsivePie
 			data={data}

@@ -1,16 +1,44 @@
+// BarChart.js
+
+import React, { useState, useEffect } from "react";
 import { ResponsiveBarCanvas } from "@nivo/bar";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { mockBarData as data } from "../data/mockData.js";
+import { fetchAttackTypesByCountry } from "../network/request"; // Adjust the path accordingly
 
 const BarChart = () => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	// Fetch the data using the external function
+	const fetchData = async () => {
+		try {
+			const attackTypesData = await fetchAttackTypesByCountry();
+			setData(attackTypesData);
+			setLoading(false);
+		} catch (error) {
+			console.error("Error fetching data", error);
+			setError("Failed to fetch data from the API");
+			setLoading(false);
+		}
+	};
+
+	// Call the data-fetching function on component mount
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	// Return a loading message or error message if applicable
+	if (loading) return <div>Loading...</div>;
+	if (error) return <div>{error}</div>;
+
 	return (
 		<ResponsiveBarCanvas
 			data={data}
 			theme={{
-				// added
 				axis: {
 					domain: {
 						line: {
@@ -38,33 +66,14 @@ const BarChart = () => {
 					},
 				},
 			}}
-			keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
+			// Adjust keys to match your data structure
+			keys={["Intrusion", "Malware", "DDoS"]}
 			indexBy="country"
 			margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
 			padding={0.3}
 			valueScale={{ type: "linear" }}
 			indexScale={{ type: "band", round: true }}
 			colors={{ scheme: "nivo" }}
-			defs={[
-				{
-					id: "dots",
-					type: "patternDots",
-					background: "inherit",
-					color: "#38bcb2",
-					size: 4,
-					padding: 1,
-					stagger: true,
-				},
-				{
-					id: "lines",
-					type: "patternLines",
-					background: "inherit",
-					color: "#eed312",
-					rotation: -45,
-					lineWidth: 6,
-					spacing: 10,
-				},
-			]}
 			borderColor={{
 				from: "color",
 				modifiers: [["darker", "1.6"]],
@@ -75,7 +84,7 @@ const BarChart = () => {
 				tickSize: 5,
 				tickPadding: 5,
 				tickRotation: 0,
-				// legend: isDashboard ? undefined : "country", // changed
+				legend: "Country",
 				legendPosition: "middle",
 				legendOffset: 32,
 			}}
@@ -83,17 +92,11 @@ const BarChart = () => {
 				tickSize: 5,
 				tickPadding: 5,
 				tickRotation: 0,
-				// legend: isDashboard ? undefined : "food", // changed
+				legend: "Attack Type",
 				legendPosition: "middle",
 				legendOffset: -40,
 			}}
 			enableLabel={false}
-			labelSkipWidth={12}
-			labelSkipHeight={12}
-			labelTextColor={{
-				from: "color",
-				modifiers: [["darker", 1.6]],
-			}}
 			legends={[
 				{
 					dataFrom: "keys",
@@ -119,9 +122,9 @@ const BarChart = () => {
 				},
 			]}
 			role="application"
-			barAriaLabel={function (e) {
-				return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
-			}}
+			barAriaLabel={(e) =>
+				`${e.id}: ${e.formattedValue} in country: ${e.indexValue}`
+			}
 		/>
 	);
 };

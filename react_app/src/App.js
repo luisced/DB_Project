@@ -11,18 +11,22 @@ import Line from "./scenes/line";
 import Pie from "./scenes/pie";
 import Geography from "./scenes/geography";
 import HeatMap from "./scenes/heatmap";
+import { fetchAttackTypesByCountry } from "./network/request";
 
 function App() {
 	const [theme, colorMode] = useMode();
 	const [apiData, setApiData] = useState(null); // Estado para almacenar los datos obtenidos de la API
-	const url = "http://localhost:8000/cyber-attacks/"; // Asegúrate de que la URL es correcta y está completa
+	const url = "http://172.29.38.142:8000/cyber-attacks/"; // Asegúrate de que la URL es correcta y está completa
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const response = await axios.get(url);
+				const attackTypesData = await fetchAttackTypesByCountry();
+				response.data.attackTypes = attackTypesData;
 				setApiData(response.data);
 				console.log("Data fetched", response.data);
+				console.log("Attack types fetched", attackTypesData);
 			} catch (error) {
 				console.error("Error fetching data", error);
 				// Manejo adicional de errores, como mostrar un mensaje en la interfaz de usuario
