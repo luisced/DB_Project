@@ -10,7 +10,7 @@ urlpatterns = [
     path('geolocalizations/', views.get_geolocalizations, name='get_geolocalizations'),
     
     path('cyber-attacks/atype-frequency/', views.atypeFrequency, name='atypeFrequency'),
-    path('cyber-attacks/severity-over-time/', views.severityOverTime, name='severityOverTime'),
+    path('cyber-attacks/severity-over-time/', views.attacks_by_severity, name='severityOverTime'),
     path('cyber-attacks/most-attacked-devices/', views.mostAttackedDevices, name='mostAttackedDevices'),
     path('cyber-attacks/ids-ips-alerts/', views.idsIpsAlerts, name='idsIpsAlerts'),
     path('cyber-attacks/geo-location/', views.geoLocation, name='geoLocation'),

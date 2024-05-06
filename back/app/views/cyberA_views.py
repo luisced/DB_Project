@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 import random
-from django.db.models import Count, F
+from django.db.models import Count, F, Func
 from django.db import models
 from ..serializers.cyberAttack_serializers import CyberAttackSerializer, AfectedUserSerializer, DeviceSerializer, GeolocalizationSerializer
 from ..models import CyberAttack, AfectedUser, Device, Geolocalization
@@ -35,9 +35,38 @@ def atypeFrequency(request):
 
 # Severity Levels of Attacks Over Time
 @api_view(['GET'])
-def severityOverTime(request):
-    severityLevels = CyberAttack.objects.annotate(date=models.functions.TruncDay('timestamp')).values('date', 'severityLevel').annotate(count=Count('id')).order_by('date', 'severityLevel')
-    return Response(severityLevels)
+def attacks_by_severity(request):
+    # Annotate data grouping by severity and the hour part of the timestamp
+    attack_data = CyberAttack.objects.values(
+        severity=F('severityLevel'),
+        hour=ExtractHour('timestamp')
+    ).annotate(
+        count=Count('id')
+    ).order_by('severity', 'hour')
+
+    # Initialize a dictionary to hold all severity levels
+    severity_dict = {}
+
+    # Fill the dictionary with data for each severity level
+    for attack in attack_data:
+        severity = attack['severity']
+        hour = attack['hour']
+        count = attack['count']
+        if severity not in severity_dict:
+            severity_dict[severity] = {'id': severity, 'data': []}
+        severity_dict[severity]['data'].append({'x': int(hour), 'y': count})
+
+    # Convert the dictionary to a list as required
+    result = list(severity_dict.values())
+
+    return Response(result)
+
+
+# Extracts only the hour part of the timestamp
+class ExtractHour(Func):
+    function = 'EXTRACT'
+    template = '%(function)s(HOUR from %(expressions)s)'
+
 
 # Devices Most Attacked
 @api_view(['GET'])
@@ -124,7 +153,6 @@ def unalerted_attacks_by_country(request):
     return Response(attacks_data)
 
 @api_view(['GET'])
-
 def attack_types_by_country(request):
     
     attack_types_data = CyberAttack.objects.filter(
@@ -162,111 +190,5 @@ def generate_random_hsl():
 
 
 '''
-[
-  {
-    "country": "AD",
-    "hot dog": 133,
-    "hot dogColor": "hsl(242, 70%, 50%)",
-    "burger": 126,
-    "burgerColor": "hsl(116, 70%, 50%)",
-    "sandwich": 91,
-    "sandwichColor": "hsl(274, 70%, 50%)",
-    "kebab": 56,
-    "kebabColor": "hsl(189, 70%, 50%)",
-    "fries": 59,
-    "friesColor": "hsl(342, 70%, 50%)",
-    "donut": 166,
-    "donutColor": "hsl(75, 70%, 50%)"
-  },
-  {
-    "country": "AE",
-    "hot dog": 199,
-    "hot dogColor": "hsl(176, 70%, 50%)",
-    "burger": 112,
-    "burgerColor": "hsl(15, 70%, 50%)",
-    "sandwich": 73,
-    "sandwichColor": "hsl(357, 70%, 50%)",
-    "kebab": 197,
-    "kebabColor": "hsl(131, 70%, 50%)",
-    "fries": 134,
-    "friesColor": "hsl(240, 70%, 50%)",
-    "donut": 33,
-    "donutColor": "hsl(93, 70%, 50%)"
-  },
-  {
-    "country": "AF",
-    "hot dog": 196,
-    "hot dogColor": "hsl(296, 70%, 50%)",
-    "burger": 50,
-    "burgerColor": "hsl(201, 70%, 50%)",
-    "sandwich": 45,
-    "sandwichColor": "hsl(269, 70%, 50%)",
-    "kebab": 141,
-    "kebabColor": "hsl(287, 70%, 50%)",
-    "fries": 131,
-    "friesColor": "hsl(60, 70%, 50%)",
-    "donut": 17,
-    "donutColor": "hsl(355, 70%, 50%)"
-  },
-  {
-    "country": "AG",
-    "hot dog": 175,
-    "hot dogColor": "hsl(23, 70%, 50%)",
-    "burger": 4,
-    "burgerColor": "hsl(69, 70%, 50%)",
-    "sandwich": 71,
-    "sandwichColor": "hsl(193, 70%, 50%)",
-    "kebab": 63,
-    "kebabColor": "hsl(126, 70%, 50%)",
-    "fries": 21,
-    "friesColor": "hsl(261, 70%, 50%)",
-    "donut": 127,
-    "donutColor": "hsl(113, 70%, 50%)"
-  },
-  {
-    "country": "AI",
-    "hot dog": 118,
-    "hot dogColor": "hsl(112, 70%, 50%)",
-    "burger": 7,
-    "burgerColor": "hsl(307, 70%, 50%)",
-    "sandwich": 116,
-    "sandwichColor": "hsl(30, 70%, 50%)",
-    "kebab": 108,
-    "kebabColor": "hsl(113, 70%, 50%)",
-    "fries": 77,
-    "friesColor": "hsl(153, 70%, 50%)",
-    "donut": 130,
-    "donutColor": "hsl(321, 70%, 50%)"
-  },
-  {
-    "country": "AL",
-    "hot dog": 92,
-    "hot dogColor": "hsl(153, 70%, 50%)",
-    "burger": 159,
-    "burgerColor": "hsl(300, 70%, 50%)",
-    "sandwich": 22,
-    "sandwichColor": "hsl(76, 70%, 50%)",
-    "kebab": 193,
-    "kebabColor": "hsl(141, 70%, 50%)",
-    "fries": 177,
-    "friesColor": "hsl(243, 70%, 50%)",
-    "donut": 96,
-    "donutColor": "hsl(100, 70%, 50%)"
-  },
-  {
-    "country": "AM",
-    "hot dog": 100,
-    "hot dogColor": "hsl(340, 70%, 50%)",
-    "burger": 97,
-    "burgerColor": "hsl(321, 70%, 50%)",
-    "sandwich": 109,
-    "sandwichColor": "hsl(33, 70%, 50%)",
-    "kebab": 7,
-    "kebabColor": "hsl(108, 70%, 50%)",
-    "fries": 131,
-    "friesColor": "hsl(170, 70%, 50%)",
-    "donut": 89,
-    "donutColor": "hsl(56, 70%, 50%)"
-  }
-]
+
 '''
