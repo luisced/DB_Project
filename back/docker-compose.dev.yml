@@ -56,4 +56,3 @@ volumes:
 
 networks:
   app_network:
-    external: true

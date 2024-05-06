@@ -152,8 +152,8 @@ const CustomSidebar = () => {
 						Data
 					</Typography>
 					<Item
-						title="Manage Team"
-						to="/team"
+						title="Heat Map"
+						to="/heatmap"
 						icon={<PeopleOutlinedIcon />}
 						selected={selected}
 						setSelected={setSelected}
