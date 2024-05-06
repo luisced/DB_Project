@@ -19,6 +19,7 @@ urlpatterns = [
     path('cyber-attacks/alerts-warnings/', views.alertsWarnings, name='alertsWarnings'),
     path('cyber-attacks/unalerted-attacks/', views.unalerted_attacks_by_country, name='unalerted_attacks_by_country'),
     path('cyber-attacks/attack-types/', views.attack_types_by_country, name='attack_types_by_country'),
+    path('cyber-attacks/calendar-heatmap/', views.calendar_heatmap, name='calendar_heatmap'),
 ]
 
 '''
@@ -38,4 +39,5 @@ http://localhost:8000/cyber-attacks/protocol-frequency/
 http://localhost:8000/cyber-attacks/alerts-warnings/
 http://localhost:8000/cyber-attacks/unalerted-attacks/
 http://localhost:8000/cyber-attacks/attack-types/
+http://localhost:8000/cyber-attacks/calendar-heatmap/
 '''
