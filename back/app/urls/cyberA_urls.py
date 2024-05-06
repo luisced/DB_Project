@@ -8,6 +8,7 @@ urlpatterns = [
     path('afected-users/', views.get_afectedUsers, name='get_afectedUsers'),
     path('devices/', views.get_devices, name='get_devices'),
     path('geolocalizations/', views.get_geolocalizations, name='get_geolocalizations'),
+    
     path('cyber-attacks/atype-frequency/', views.atypeFrequency, name='atypeFrequency'),
     path('cyber-attacks/severity-over-time/', views.severityOverTime, name='severityOverTime'),
     path('cyber-attacks/most-attacked-devices/', views.mostAttackedDevices, name='mostAttackedDevices'),

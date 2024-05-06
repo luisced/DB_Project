@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
+import random
 from django.db.models import Count, F
 from django.db import models
 from ..serializers.cyberAttack_serializers import CyberAttackSerializer, AfectedUserSerializer, DeviceSerializer, GeolocalizationSerializer
@@ -115,7 +116,7 @@ def unalerted_attacks_by_country(request):
         alertsWarnings=False,
         geoLocation__isnull=False
     ).values(
-        country=F('geoLocation__locality')  # Corrected to use 'locality'
+        country=F('geoLocation__city')  # Corrected to use 'locality'
     ).annotate(
         count=Count('id')
     ).order_by('-count')
@@ -123,26 +124,149 @@ def unalerted_attacks_by_country(request):
     return Response(attacks_data)
 
 @api_view(['GET'])
+
 def attack_types_by_country(request):
-    # Correctly using .values() for grouping and .annotate() for counting
+    
     attack_types_data = CyberAttack.objects.filter(
         alertsWarnings=False,
         geoLocation__isnull=False
     ).values(
-        'geoLocation__locality',  # Directly specify the field for grouping
-        'attackType'  # Directly specify the field for additional grouping
+        'geoLocation__city',
+        'attackType'
     ).annotate(
-        count=Count('id')  # Only use aggregate functions in annotate
-    ).order_by('geoLocation__locality', '-count')
+        count=Count('id')
+    ).order_by('geoLocation__city', '-count')
 
-    # Reformatting the data for better JSON structure
     result = {}
-    for item in attack_types_data:
-        country = item['geoLocation__locality']  # Use the correct field name from values
-        attack_type = item['attackType']  # Use the correct field name from values
-        if country not in result:
-            result[country] = []
-        result[country].append({attack_type: item['count']})
-        
-    return Response(result)
 
+    for item in attack_types_data:
+        country = item['geoLocation__city']
+        attack_type = item['attackType']
+        if country not in result:
+            result[country] = {'country': country}
+
+        if attack_type not in result[country]:
+            color_field = f'{attack_type}Color'
+            result[country][attack_type] = item['count']
+            result[country][color_field] = generate_random_hsl()
+
+    # Convert the result dictionary to a list of dictionaries as required
+    result_list = list(result.values())
+    return Response(result_list)
+
+def generate_random_hsl():
+    hue = random.randint(0, 360)
+    saturation = random.randint(50, 100)
+    lightness = random.randint(40, 60)
+    return f'hsl({hue}, {saturation}%, {lightness}%)'
+
+
+'''
+[
+  {
+    "country": "AD",
+    "hot dog": 133,
+    "hot dogColor": "hsl(242, 70%, 50%)",
+    "burger": 126,
+    "burgerColor": "hsl(116, 70%, 50%)",
+    "sandwich": 91,
+    "sandwichColor": "hsl(274, 70%, 50%)",
+    "kebab": 56,
+    "kebabColor": "hsl(189, 70%, 50%)",
+    "fries": 59,
+    "friesColor": "hsl(342, 70%, 50%)",
+    "donut": 166,
+    "donutColor": "hsl(75, 70%, 50%)"
+  },
+  {
+    "country": "AE",
+    "hot dog": 199,
+    "hot dogColor": "hsl(176, 70%, 50%)",
+    "burger": 112,
+    "burgerColor": "hsl(15, 70%, 50%)",
+    "sandwich": 73,
+    "sandwichColor": "hsl(357, 70%, 50%)",
+    "kebab": 197,
+    "kebabColor": "hsl(131, 70%, 50%)",
+    "fries": 134,
+    "friesColor": "hsl(240, 70%, 50%)",
+    "donut": 33,
+    "donutColor": "hsl(93, 70%, 50%)"
+  },
+  {
+    "country": "AF",
+    "hot dog": 196,
+    "hot dogColor": "hsl(296, 70%, 50%)",
+    "burger": 50,
+    "burgerColor": "hsl(201, 70%, 50%)",
+    "sandwich": 45,
+    "sandwichColor": "hsl(269, 70%, 50%)",
+    "kebab": 141,
+    "kebabColor": "hsl(287, 70%, 50%)",
+    "fries": 131,
+    "friesColor": "hsl(60, 70%, 50%)",
+    "donut": 17,
+    "donutColor": "hsl(355, 70%, 50%)"
+  },
+  {
+    "country": "AG",
+    "hot dog": 175,
+    "hot dogColor": "hsl(23, 70%, 50%)",
+    "burger": 4,
+    "burgerColor": "hsl(69, 70%, 50%)",
+    "sandwich": 71,
+    "sandwichColor": "hsl(193, 70%, 50%)",
+    "kebab": 63,
+    "kebabColor": "hsl(126, 70%, 50%)",
+    "fries": 21,
+    "friesColor": "hsl(261, 70%, 50%)",
+    "donut": 127,
+    "donutColor": "hsl(113, 70%, 50%)"
+  },
+  {
+    "country": "AI",
+    "hot dog": 118,
+    "hot dogColor": "hsl(112, 70%, 50%)",
+    "burger": 7,
+    "burgerColor": "hsl(307, 70%, 50%)",
+    "sandwich": 116,
+    "sandwichColor": "hsl(30, 70%, 50%)",
+    "kebab": 108,
+    "kebabColor": "hsl(113, 70%, 50%)",
+    "fries": 77,
+    "friesColor": "hsl(153, 70%, 50%)",
+    "donut": 130,
+    "donutColor": "hsl(321, 70%, 50%)"
+  },
+  {
+    "country": "AL",
+    "hot dog": 92,
+    "hot dogColor": "hsl(153, 70%, 50%)",
+    "burger": 159,
+    "burgerColor": "hsl(300, 70%, 50%)",
+    "sandwich": 22,
+    "sandwichColor": "hsl(76, 70%, 50%)",
+    "kebab": 193,
+    "kebabColor": "hsl(141, 70%, 50%)",
+    "fries": 177,
+    "friesColor": "hsl(243, 70%, 50%)",
+    "donut": 96,
+    "donutColor": "hsl(100, 70%, 50%)"
+  },
+  {
+    "country": "AM",
+    "hot dog": 100,
+    "hot dogColor": "hsl(340, 70%, 50%)",
+    "burger": 97,
+    "burgerColor": "hsl(321, 70%, 50%)",
+    "sandwich": 109,
+    "sandwichColor": "hsl(33, 70%, 50%)",
+    "kebab": 7,
+    "kebabColor": "hsl(108, 70%, 50%)",
+    "fries": 131,
+    "friesColor": "hsl(170, 70%, 50%)",
+    "donut": 89,
+    "donutColor": "hsl(56, 70%, 50%)"
+  }
+]
+'''
