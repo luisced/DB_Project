@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 import random
 from django.db.models import Count, F, Func, Q
-from django.db.models.functions import TruncDay, ExtractMonth
+from django.db.models.functions import TruncDay, ExtractYear, ExtractQuarter
 from django.db import models
 from ..serializers.cyberAttack_serializers import CyberAttackSerializer, AfectedUserSerializer, DeviceSerializer, GeolocalizationSerializer
 from ..models import CyberAttack, AfectedUser, Device, Geolocalization
@@ -192,38 +192,40 @@ def calendar_heatmap(request):
 
 # Correlation Between Attack Type and Action Taken
 @api_view(['GET'])
-def attackAction(request):
-    # Query to get counts of actions taken for each attack type
-    attackActions = CyberAttack.objects.values(
-        'attackType', 'actionTaken'
-    ).annotate(
+def cyber_attack_actions_over_time(request):
+    # Group attacks by quarter and action taken
+    actions_per_quarter = CyberAttack.objects.annotate(
+        year=ExtractYear('timestamp'),
+        quarter=ExtractQuarter('timestamp')
+    ).values('year', 'quarter', 'actionTaken').annotate(
         count=Count('id')
-    ).order_by('attackType', 'actionTaken')
-    
-    # Initialize a dictionary to store the data structured by attackType
-    structured_data = {}
+    ).order_by('year', 'quarter', 'actionTaken')
 
-    # Populate the structured_data dictionary
-    for action in attackActions:
-        attack_type = action['attackType']
-        if attack_type not in structured_data:
-            # Generate random HSL color for each attack type
-            color = f"hsl({random.randint(0, 360)}, 70%, 50%)"
-            structured_data[attack_type] = {
-                "id": attack_type.lower(),  # Convert attack type to lowercase for the id
-                "color": color,
+    # Organize data by actionTaken to create separate lines for each action
+    action_data = {}
+    for entry in actions_per_quarter:
+        action = entry['actionTaken']
+        year = entry['year']
+        quarter = entry['quarter']
+        period = f"{year} Q{quarter}"  # Format the x-axis label as "Year QQuarter"
+
+        if action not in action_data:
+            action_data[action] = {
+                "id": action,
                 "data": []
             }
-        structured_data[attack_type]['data'].append({
-            "x": action['actionTaken'],
-            "y": action['count']
+        action_data[action]['data'].append({
+            "x": period,
+            "y": entry['count']
         })
 
-    # Convert the dictionary to a list to match the expected output format
-    response_data = list(structured_data.values())
+    # Convert dictionary to list as required by Nivo Line Chart
+    formatted_data = list(action_data.values())
 
-    return Response(response_data)
+    return Response(formatted_data)
 
+    
+    
 # Protocol Usage Frequency
 @api_view(['GET'])
 def protocolFrequency(request):
