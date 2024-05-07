@@ -30,21 +30,20 @@ http://localhost:8000/afected-users/
 http://localhost:8000/devices/
 http://localhost:8000/geolocalizations/
 
+http://localhost:8000/cyber-attacks/geo-location/
+http://localhost:8000/cyber-attacks/alerts-warnings/
 http://localhost:8000/cyber-attacks/atype-frequency/
+
 AreaBump
     http://localhost:8000/cyber-attacks/severity-over-time/
 TreeMap
     http://localhost:8000/cyber-attacks/most-attacked-devices/
 PieChart
     http://localhost:8000/cyber-attacks/ids-ips-alerts/
-    
-http://localhost:8000/cyber-attacks/geo-location/
 Line
     http://localhost:8000/cyber-attacks/attack-action/
 PieChart
     http://localhost:8000/cyber-attacks/protocol-frequency/
-    
-http://localhost:8000/cyber-attacks/alerts-warnings/
 GeoMap
     http://localhost:8000/cyber-attacks/unalerted-attacks/
 BarChart
