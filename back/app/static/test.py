@@ -61,6 +61,7 @@ locations = [
     ("Bhubaneswar", "India"), ("Salem", "India"), ("Mira-Bhayandar", "India"),
     ("Thiruvananthapuram", "India"), ("Bhiwandi", "India"), ("Saharanpur", "India"),
     ("Gorakhpur", "India"), ("Guntur", "India"),
+    
     #another cities from india
     ("Bikaner", "India"), ("Ajmer", "India"), ("Udaipur", "India"),
     ("Bhilwara", "India"), ("Alwar", "India"), ("Bharatpur", "India"),
@@ -87,7 +88,15 @@ locations = [
     ("Rostov-on-Don", "Russia"), ("Ufa", "Russia"), ("Volgograd", "Russia"),
     ("Perm", "Russia"), ("Krasnoyarsk", "Russia"), ("Voronezh", "Russia"),
     ("Saratov", "Russia"), ("Krasnodar", "Russia"), ("Tolyatti", "Russia"),
-    
+    #USa
+    ("New York", "USA"), ("Los Angeles", "USA"), ("Chicago", "USA"),
+    ("Houston", "USA"), ("Phoenix", "USA"), ("Philadelphia", "USA"),
+    ("San Antonio", "USA"), ("San Diego", "USA"), ("Dallas", "USA"),
+    ("San Jose", "USA"), ("Austin", "USA"), ("Jacksonville", "USA"),
+    ("San Francisco", "USA"), ("Indianapolis", "USA"), ("Columbus", "USA"),
+    ("Fort Worth", "USA"), ("Charlotte", "USA"), ("Seattle", "USA"),
+    ("Denver", "USA"), ("El Paso", "USA"), ("Detroit", "USA"),  
+    ("Washington", "USA"), ("Boston", "USA"), ("Memphis", "USA"),
     
     ("New York", "USA"), ("London", "UK"), ("Berlin", "Germany"),
     ("Sydney", "Australia"), ("Tokyo", "Japan"), ("Paris", "France"),
@@ -155,8 +164,43 @@ def anonymize_geo_location(input_file, output_file):
             writer.writerow(row)
 
 # Provide the input and output CSV file paths
-input_csv = '/Users/javierrangel/Documents/DB_Project/back/app/static/cybersecurity_attacksOLD.csv'
+input_csv = '/Users/javierrangel/Documents/DB_Project/back/app/static/cybersecurity_attacksold.csv'
 output_csv = '/Users/javierrangel/Documents/DB_Project/back/app/static/cybersecurity_attacks.csv'
 
 # Run the anonymization function
 anonymize_geo_location(input_csv, output_csv)
+
+
+import pandas as pd
+import random
+from datetime import datetime
+
+def weighted_random_date_generator(month_weights, year):
+    # Select a month based on the defined weights
+    month = random.choices(list(month_weights.keys()), weights=list(month_weights.values()), k=1)[0]
+    # Randomly generate a day for the selected month (assuming 28-31 days)
+    day = random.randint(1, 28 if month == 2 else (30 if month in [4, 6, 9, 11] else 31))
+    # Randomly generate a time
+    hour = random.randint(0, 23)
+    minute = random.randint(0, 59)
+    second = random.randint(0, 59)
+    # Construct the datetime object and format it
+    return datetime(year, month, day, hour, minute, second).strftime('%Y-%m-%d %H:%M:%S')
+
+def modify_csv_dates(file_path, output_path):
+    df = pd.read_csv(file_path)
+
+    # Define the month weights based on the requirements
+    month_weights = {
+        1: 10, 2: 20, 3: 10, 4: 10, 5: 15, 6: 10,
+        7: 15, 8: 10, 9: 20, 10: 20, 11: 20, 12: 15
+    }
+
+    # Update the timestamps
+    df['Timestamp'] = df['Timestamp'].apply(lambda x: weighted_random_date_generator(month_weights, pd.to_datetime(x).year))
+
+    # Save the modified CSV
+    df.to_csv(output_path, index=False)
+
+# Example usage
+#modify_csv_dates(input_csv, output_csv)

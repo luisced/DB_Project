@@ -48,16 +48,6 @@ def attacks_by_severity(request):
 
     # Initialize a dictionary to hold all severity levels
     severity_dict = {}
-
-    # Fill the dictionary with data for each severity level
-    # for attack in attack_data:
-    #     severity = attack['severity']
-    #     hour = attack['hour']
-    #     count = attack['count']
-    #     if severity not in severity_dict:
-    #         severity_dict[severity] = {'id': severity, 'data': []}
-    #     severity_dict[severity]['data'].append({'x': int(hour), 'y': count})
-    
     
     # Fill the dictionary with data for each severity level but in intervals of 3 hours instead of 1
     for attack in attack_data:
@@ -374,8 +364,3 @@ def attack_types_by_country(request):
     # Convert the result dictionary to a list of dictionaries as required
     result_list = list(result.values())
     return Response(result_list)
-
-
-'''
-
-'''
