@@ -1,38 +1,48 @@
-# Bases de datos avanzadas - Proyecto Final
-## Integrantes
-- [Luis Cedillo Maldonado]
-- [Javier Alejandro Rangel Murillo]
+# 🗃️ Bases de Datos Avanzadas - Proyecto Final
+## 👥 Integrantes
+- Luis Cedillo Maldonado
+- Javier Alejandro Rangel Murillo
 
-## Description
-Dashboard para la visualización de datos de un conjunto de ciberataques en un periodo de tiempo determinado. El dashboard permite visualizar los datos de los ciberataques en diferentes gráficas y permite realizar un analizis de los datos.
+## 📋 Descripción
+🔍 *Dashboard para la visualización de datos de un conjunto de ciberataques en un periodo de tiempo determinado*.  
+El dashboard permite visualizar los datos de los ciberataques en diferentes gráficas y realizar un análisis detallado de estos datos.
 
-## Installation
-Moverse a la carpeta del backend ejecutando el siguiente comando en la carpeta raiz del proyecto:
-```bash
-cd back
-```
-Levantar el contenedor de docker con el siguiente comando:
-```bash
-docker compose --env-file .env.dev -f docker-compose.dev.yml up --build
-```
+## ⚙️ Prerequisitos
+- Docker  
+- Navegador web compatible (Chrome, Firefox, Safari, etc.)  
 
-Moverse a la carpeta del frontend ejecutando el siguiente comando en la carpeta raiz del proyecto:
-```bash
-cd react_app
-```
-Levantar el contenedor de docker con el siguiente comando:
-```bash
-docker compose up --build
-```
+## 🚀 Instalación
+### Backend
+1. Dirígete a la carpeta del backend ejecutando el siguiente comando en la carpeta raíz del proyecto:
+    ```bash
+    cd back
+    ```
+2. Levanta el contenedor de Docker con:
+    ```bash
+    docker compose --env-file .env.dev -f docker-compose.dev.yml up --build
+    ```
 
-## Usage
-[Provide instructions on how to run the project]
+### Frontend
+1. Dirígete a la carpeta del frontend ejecutando:
+    ```bash
+    cd react_app
+    ```
+2. Levanta el contenedor de Docker con:
+    ```bash
+    docker compose up --build
+    ```
 
-## Contributing
-[Provide guidelines for contributing to the project, if applicable]
-
-## License
-[Specify the license under which the project is distributed]
-
-## Contact
-[Provide contact information for any questions or issues related to the project]
+## 📊 Uso
+- Para acceder al dashboard, abre un navegador web y dirígete a:
+    ```bash
+    http://localhost:3000
+    ```
+- También puedes acceder a la base de datos de la API en:
+    ```bash
+    http://localhost:8080
+    ```
+    con las siguientes credenciales:
+    - 🗃️ Motor: PostgreSQL
+    - 👤 Usuario: `postgres`
+    - 🔒 Contraseña: `postgres`
+    - 🛢️ Base de datos: `postgres`
