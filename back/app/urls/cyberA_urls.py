@@ -29,15 +29,26 @@ http://localhost:8000/cyber-attacks/1/
 http://localhost:8000/afected-users/
 http://localhost:8000/devices/
 http://localhost:8000/geolocalizations/
+
 http://localhost:8000/cyber-attacks/atype-frequency/
-http://localhost:8000/cyber-attacks/severity-over-time/
-http://localhost:8000/cyber-attacks/most-attacked-devices/
-http://localhost:8000/cyber-attacks/ids-ips-alerts/
+AreaBump
+    http://localhost:8000/cyber-attacks/severity-over-time/
+TreeMap
+    http://localhost:8000/cyber-attacks/most-attacked-devices/
+PieChart
+    http://localhost:8000/cyber-attacks/ids-ips-alerts/
+    
 http://localhost:8000/cyber-attacks/geo-location/
-http://localhost:8000/cyber-attacks/attack-action/
-http://localhost:8000/cyber-attacks/protocol-frequency/
+Line
+    http://localhost:8000/cyber-attacks/attack-action/
+PieChart
+    http://localhost:8000/cyber-attacks/protocol-frequency/
+    
 http://localhost:8000/cyber-attacks/alerts-warnings/
-http://localhost:8000/cyber-attacks/unalerted-attacks/
-http://localhost:8000/cyber-attacks/attack-types/
-http://localhost:8000/cyber-attacks/calendar-heatmap/
+GeoMap
+    http://localhost:8000/cyber-attacks/unalerted-attacks/
+BarChart
+    http://localhost:8000/cyber-attacks/attack-types/
+CalendarHeatmap
+    http://localhost:8000/cyber-attacks/calendar-heatmap/
 '''
