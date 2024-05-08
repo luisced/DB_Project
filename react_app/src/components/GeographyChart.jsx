@@ -3,10 +3,36 @@ import { ResponsiveChoropleth } from "@nivo/geo";
 import { geoFeatures } from "../data/geoFeatures";
 import { mockGeographyData as data } from "../data/mockData";
 import { tokens } from "../theme";
+import { fetchAttackUnalerted } from "../network/request";
+import React, { useState, useEffect } from "react";
 
 const GeographyChart = ({ isDashboard = false }) => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	const fetchData = async () => {
+		try {
+			const attackTypesData = await fetchAttackUnalerted();
+			setData(attackTypesData);
+			setLoading(false);
+		} catch (error) {
+			console.error("Error fetching data", error);
+			setError("Failed to fetch data from the API");
+			setLoading(false);
+		}
+	};
+
+	// Call the data-fetching function on component mount
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	if (loading) return <div>Loading...</div>;
+	if (error) return <div>{error}</div>;
+
 	return (
 		<ResponsiveChoropleth
 			data={data}
@@ -40,7 +66,7 @@ const GeographyChart = ({ isDashboard = false }) => {
 			}}
 			features={geoFeatures.features}
 			margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-			domain={[0, 1000000]}
+			domain={[0, 10000]}
 			unknownColor="#666666"
 			label="properties.name"
 			valueFormat=".2s"
@@ -48,7 +74,7 @@ const GeographyChart = ({ isDashboard = false }) => {
 			projectionTranslation={isDashboard ? [0.49, 0.6] : [0.5, 0.5]}
 			projectionRotation={[0, 0, 0]}
 			borderWidth={1.5}
-			borderColor="#ffffff"
+			borderColor="#4f4f4f"
 			legends={
 				!isDashboard
 					? [
@@ -69,7 +95,7 @@ const GeographyChart = ({ isDashboard = false }) => {
 									{
 										on: "hover",
 										style: {
-											itemTextColor: "#ffffff",
+											itemTextColor: "#0000",
 											itemOpacity: 1,
 										},
 									},

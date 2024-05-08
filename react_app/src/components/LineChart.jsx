@@ -4,10 +4,37 @@ import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { mockLineData as data } from "../data/mockData";
+import { fetchAttackAction } from "../network/request";
+import React, { useState, useEffect } from "react";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	// Fetch the data using the external function
+	const fetchData = async () => {
+		try {
+			const attackTypesData = await fetchAttackAction();
+			setData(attackTypesData);
+			setLoading(false);
+		} catch (error) {
+			console.error("Error fetching data", error);
+			setError("Failed to fetch data from the API");
+			setLoading(false);
+		}
+	};
+
+	// Call the data-fetching function on component mount
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	// Return a loading message or error message if applicable
+	if (loading) return <div>Loading...</div>;
+	if (error) return <div>{error}</div>;
 
 	return (
 		<ResponsiveLine
