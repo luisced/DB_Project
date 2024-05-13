@@ -79,8 +79,12 @@ def mostAttackedDevices(request):
         "Windows": Q(operative_system__icontains="Windows"),
         "Linux": Q(operative_system__icontains="Linux"),
         "Android": Q(operative_system__icontains="Android"),
-        "macOS": Q(operative_system__icontains="macOS"),
-        "iOS": Q(operative_system__icontains="iOS")
+        "Macintosh": Q(operative_system__icontains="Macintosh"),
+        "iOS": Q(operative_system__icontains="iOS"),
+        "iPod": Q(operative_system__icontains="iPod"),
+        "iPad": Q(operative_system__icontains="iPad"),
+        "iPhone": Q(operative_system__icontains="iPhone"),
+
     }
 
     # Initialize the treemap structure
@@ -153,7 +157,7 @@ def idsIpsAlerts(request):
 # Geographical Distribution of Attacks
 @api_view(['GET'])
 def geoLocation(request):
-    geoLocations = CyberAttack.objects.values('geoLocation__city').annotate(count=Count('geoLocation')).order_by('-count')
+    geoLocations = CyberAttack.objects.values('geoLocation__locality').annotate(count=Count('geoLocation')).order_by('-count')
     return Response(geoLocations)
 
 #calendar heatmap
@@ -284,7 +288,7 @@ def unalerted_attacks_by_country(request):
         alertsWarnings=False,
         geoLocation__isnull=False
     ).values(
-        country=F('geoLocation__city')  # This should possibly be a country field instead of city
+        country=F('geoLocation__locality')  # This should possibly be a country field instead of locality
     ).annotate(
         unalerted_count=Count('id')
     )
@@ -321,17 +325,17 @@ def attack_types_by_country(request):
         alertsWarnings=False,
         geoLocation__isnull=False
     ).values(
-        'geoLocation__city',
+        'geoLocation__locality',
         'attackType'
     ).annotate(
         count=Count('id')
-    ).order_by('geoLocation__city', '-count')
+    ).order_by('geoLocation__locality', '-count')
 
     result = {}
     other_countries = {'country': "Other Countries"}
 
     for item in attack_types_data:
-        country = item['geoLocation__city']
+        country = item['geoLocation__locality']
         attack_type = item['attackType']
         count = item['count']
         

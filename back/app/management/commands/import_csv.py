@@ -12,10 +12,27 @@ user_cache = {}
 device_cache = {}
 geo_location_cache = {}
 
+def get_or_create_geolocation(location_data):
+    if location_data not in geo_location_cache:
+        try:
+            city, locality = location_data.split(', ')
+        except ValueError:
+            locality = location_data
+            city = ''
+        geo_location = Geolocalization.objects.filter(locality=locality, city=city).first()
+        if not geo_location:
+            geo_location = Geolocalization.objects.create(locality=locality, city=city)
+        geo_location_cache[location_data] = geo_location
+
+    return geo_location_cache[location_data]
+
 def get_or_create_user(username):
     if username not in user_cache:
-        user, created = AfectedUser.objects.get_or_create(username=username)
+        user = AfectedUser.objects.filter(username=username).first()
+        if not user:
+            user = AfectedUser.objects.create(username=username)
         user_cache[username] = user
+
     return user_cache[username]
 
 
@@ -31,29 +48,12 @@ def deviceSplit(device_info):
 def get_or_create_device(device_info):
     if device_info not in device_cache:
         web_browser, os, rest = deviceSplit(device_info)
-        device, created = Device.objects.get_or_create(
-            web_browser=web_browser, 
-            operative_system=os, 
-            rest_information=rest
-        )
+        device = Device.objects.filter(web_browser=web_browser, operative_system=os, rest_information=rest).first()
+        if not device:
+            device = Device.objects.create(web_browser=web_browser, operative_system=os, rest_information=rest)
         device_cache[device_info] = device
+
     return device_cache[device_info]
-
-
-def get_or_create_geolocation(location_data):
-    if location_data not in geo_location_cache:
-        try:
-            locality, city = location_data.split(', ')
-        except ValueError:
-            locality = location_data
-            city = ''
-        geo_location, created = Geolocalization.objects.get_or_create(
-            locality=locality, 
-            city=city
-        )
-        geo_location_cache[location_data] = geo_location
-
-    return geo_location_cache[location_data]
 
 
 

@@ -16,7 +16,7 @@ import { fetchAttackTypesByCountry } from "./network/request";
 function App() {
 	const [theme, colorMode] = useMode();
 	const [apiData, setApiData] = useState(null); // Estado para almacenar los datos obtenidos de la API
-	const url = "http://172.29.38.142:8000/cyber-attacks/"; // Asegúrate de que la URL es correcta y está completa
+	const url = "http://localhost:8000/cyber-attacks/"; // Asegúrate de que la URL es correcta y está completa
 
 	useEffect(() => {
 		const fetchData = async () => {

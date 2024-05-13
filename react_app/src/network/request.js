@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const API_URL = "http://172.29.38.142:8000/cyber-attacks/";
+const API_URL = "http://localhost:8000/cyber-attacks/";
 
 // Function to fetch attack types by country
 export const fetchAttackTypesByCountry = async () => {
