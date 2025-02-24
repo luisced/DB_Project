@@ -18,10 +18,6 @@ echo "Creating superuser..."
 python manage.py create_superuser
 echo "<==================================>"
 
-# Add CSV
-echo "Adding CSV..."
-python manage.py import_csv app/static/cybersecurity_attacks.csv
-echo "<==================================>"
 
 # Start the server
 echo "Starting server..."
